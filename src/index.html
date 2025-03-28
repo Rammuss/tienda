@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda Online</title>
+    <script>
+        async function cargarProductos() {
+            const sheetUrl = 'https://docs.google.com/spreadsheets/d/1T7olDt8YAg-6RHEfSGv5t5AdFCJwLBS4tLu02lgLkSw/gviz/tq?tqx=out:json&tq=';
+            try {
+                const response = await fetch(sheetUrl);
+                const text = await response.text();
+                const json = JSON.parse(text.substring(47, text.length - 2));
+                const productos = json.table.rows.map(row => {
+                    return {
+                        nombre: row.c[0].v,
+                        precio: row.c[1].v,
+                        imagen: row.c[2].v,
+                        telefono: '595XXXXXXXXX' // Número de WhatsApp del vendedor
+                    };
+                });
+                mostrarProductos(productos);
+            } catch (error) {
+                console.error('Error al cargar productos:', error);
+            }
+        }
+
+        function mostrarProductos(productos) {
+            const contenedor = document.getElementById('productos');
+            contenedor.innerHTML = '';
+            productos.forEach(prod => {
+                const productoHTML = `
+                    <div style="border: 1px solid #ddd; padding: 10px; margin: 10px; text-align: center;">
+                        <img src="${prod.imagen}" alt="${prod.nombre}" style="width: 100px; height: 100px;"><br>
+                        <strong>${prod.nombre}</strong><br>
+                        Precio: ${prod.precio} Gs<br>
+                        <a href="https://wa.me/${prod.telefono}?text=Hola,%20quiero%20más%20información%20sobre%20${encodeURIComponent(prod.nombre)}%20(${prod.precio} Gs)" target="_blank">
+                            <button style="background-color: green; color: white; padding: 5px 10px; border: none; cursor: pointer;">Consultar por WhatsApp</button>
+                        </a>
+                    </div>
+                `;
+                contenedor.innerHTML += productoHTML;
+            });
+        }
+
+        window.onload = cargarProductos;
+    </script>
+</head>
+<body>
+    <h2 style="text-align: center;">Catálogo de Productos</h2>
+    <div id="productos" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+</body>
+</html>
