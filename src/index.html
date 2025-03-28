@@ -1,9 +1,22 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda Online</title>
+    <meta name="description" content="Compra productos de alta calidad como sábanas y artículos para el hogar en nuestra tienda online. Consulta y compra rápidamente a través de WhatsApp.">
+    <title>Tienda Online de Productos para el Hogar</title>
+
+    <!-- Agregar etiquetas de Open Graph para mejorar la presentación en redes sociales -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Tienda Online de Productos para el Hogar">
+    <meta property="og:description" content="Compra productos de alta calidad como sábanas y artículos para el hogar.">
+    <meta property="og:image" content="https://link-a-imagen.jpg">
+    <meta property="og:url" content="https://www.mi-tienda.com">
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
+
     <script>
         async function cargarProductos() {
             const sheetUrl = 'https://docs.google.com/spreadsheets/d/1T7olDt8YAg-6RHEfSGv5t5AdFCJwLBS4tLu02lgLkSw/gviz/tq?tqx=out:json&tq=';
@@ -11,14 +24,17 @@
                 const response = await fetch(sheetUrl);
                 const text = await response.text();
                 const json = JSON.parse(text.substring(47, text.length - 2));
+
+                // Acceder a los datos correctamente
                 const productos = json.table.rows.map(row => {
                     return {
-                        nombre: row.c[0].v,
-                        precio: row.c[1].v,
-                        imagen: row.c[2].v,
-                        telefono: '595XXXXXXXXX' // Número de WhatsApp del vendedor
+                        nombre: row.c[0]?.v || "Nombre no disponible",
+                        precio: row.c[1]?.v || "Precio no disponible",
+                        imagen: row.c[2]?.v || "", // Si no hay imagen, vacía
+                        telefono: '595981815703' // Número de WhatsApp del vendedor
                     };
                 });
+
                 mostrarProductos(productos);
             } catch (error) {
                 console.error('Error al cargar productos:', error);
@@ -27,15 +43,15 @@
 
         function mostrarProductos(productos) {
             const contenedor = document.getElementById('productos');
-            contenedor.innerHTML = '';
+            contenedor.innerHTML = ''; // Limpiar el contenedor antes de agregar productos
             productos.forEach(prod => {
                 const productoHTML = `
-                    <div style="border: 1px solid #ddd; padding: 10px; margin: 10px; text-align: center;">
-                        <img src="${prod.imagen}" alt="${prod.nombre}" style="width: 100px; height: 100px;"><br>
-                        <strong>${prod.nombre}</strong><br>
+                    <div class="producto">
+                        ${prod.imagen ? `<img src="${prod.imagen}" alt="${prod.nombre}" class="producto-img"><br>` : ''}
+                        <h2>${prod.nombre}</h2> <!-- Cambié el <strong> por <h2> para mejorar el SEO -->
                         Precio: ${prod.precio} Gs<br>
-                        <a href="https://wa.me/${prod.telefono}?text=Hola,%20quiero%20más%20información%20sobre%20${encodeURIComponent(prod.nombre)}%20(${prod.precio} Gs)" target="_blank">
-                            <button style="background-color: green; color: white; padding: 5px 10px; border: none; cursor: pointer;">Consultar por WhatsApp</button>
+                        <a href="https://wa.me/${prod.telefono}?text=Hola,%20quiero%20más%20información%20sobre%20${encodeURIComponent(prod.nombre)}%20(${prod.precio} Gs)%0AImagen:%20${encodeURIComponent(prod.imagen)}" target="_blank">
+                            <button class="whatsapp-btn">Consultar por WhatsApp</button>
                         </a>
                     </div>
                 `;
@@ -45,9 +61,79 @@
 
         window.onload = cargarProductos;
     </script>
+
+<style>
+    /* Estilo para el título h1 */
+    h2 {
+        font-size: 2rem; /* Ajusta el tamaño de la fuente */
+        margin-top: 10px; /* Añade margen superior */
+        margin-bottom: 20px; /* Añade margen inferior */
+        text-align: center;
+        color: #333; /* Color del texto */
+    }
+
+    /* Estilo para el contenedor de los productos */
+    #productos {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas en PC */
+        gap: 20px;
+        padding: 10px;
+    }
+
+    /* Estilo para cada producto */
+    .producto {
+        border: 1px solid #ddd;
+        padding: 10px;
+        text-align: center;
+        background-color: #f9f9f9;
+    }
+
+    /* Estilo para las imágenes de los productos */
+    .producto-img {
+        width: 100%;
+        height: auto;
+        max-width: 200px; /* Limita el tamaño de la imagen */
+    }
+
+    /* Estilo para los botones de WhatsApp */
+    .whatsapp-btn {
+        background-color: green;
+        color: white;
+        padding: 10px 20px;
+        border: none;
+        cursor: pointer;
+    }
+
+    /* Media query para pantallas pequeñas (móviles) */
+    @media (max-width: 768px) {
+        #productos {
+            grid-template-columns: 1fr; /* 1 columna en móvil */
+        }
+
+        .producto-img {
+            width: 100%; /* Aseguramos que la imagen ocupe todo el ancho en móvil */
+        }
+    }
+</style>
+
+
 </head>
+
 <body>
-    <h2 style="text-align: center;">Catálogo de Productos</h2>
-    <div id="productos" style="display: flex; flex-wrap: wrap; justify-content: center;"></div>
+    <header>
+        <nav>
+            <!-- Agrega un menú de navegación si es necesario -->
+        </nav>
+    </header>
+
+    <main>
+        <h1 style="text-align: center;">Catálogo de Productos para el Hogar</h1>
+        <section id="productos"></section>
+    </main>
+
+    <footer>
+        <p style="text-align: center;">&copy; 2025 Tienda Online | Todos los derechos reservados</p>
+    </footer>
 </body>
+
 </html>
